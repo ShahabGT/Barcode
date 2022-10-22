@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Barcode</string>
+
+    <string name="camera_permission_rationale_message">message</string>
+    <string name="camera_permission_rationale_title">title</string>
+    <string name="camera_permission_rationale_positive">positive</string>
+    <string name="camera_permission_rationale_negative">negative</string>
+    <string name="camera_permission_rationale_settings">settings</string>
+
 </resources>
