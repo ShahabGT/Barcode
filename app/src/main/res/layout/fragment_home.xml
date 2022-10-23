@@ -16,6 +16,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_recycler" />
 
+    <ImageView
+        android:id="@+id/emptyView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/empty_list"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/colorSecondary" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/scanButton"
         android:layout_width="wrap_content"
@@ -27,5 +39,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="?attr/colorSecondary" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/detailsFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:text="@string/details_fab_title"
+        app:backgroundTint="?attr/colorSecondaryContainer"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,9 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -21,8 +19,13 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.core.view.removeItemAt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
@@ -90,6 +93,7 @@ class ScanBarcodeFragment : Fragment() {
             setNavigationOnClickListener {
                 handleBackPress()
             }
+            menu.findItem(R.id.appbar_menu_clear).isVisible=false
         }
 
         setupPermissions()
@@ -119,7 +123,7 @@ class ScanBarcodeFragment : Fragment() {
                         if (processingBarcode.compareAndSet(false, true) &&
                             barcode != Consts.BARCODE_ERROR
                         ) {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            lifecycleScope.launch {
                                 binding.qrDescription.text = barcode
                                 scannedBarcodes.add(barcode)
                                 delay(1500)

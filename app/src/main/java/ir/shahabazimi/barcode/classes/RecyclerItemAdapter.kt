@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ir.shahabazimi.barcode.databinding.ItemRecyclerBinding
 
-class RecyclerItemAdapter : RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>(){
+class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) : RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>(){
     private lateinit var binding: ItemRecyclerBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemAdapter.ViewHolder {
         binding= ItemRecyclerBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -26,6 +26,9 @@ class RecyclerItemAdapter : RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>
         fun setData(item : RecyclerItemModel){
             binding.apply {
                 weight.text = item.weight
+                delete.setOnClickListener {
+                    onSelect(item)
+                }
             }
         }
 
@@ -41,6 +44,9 @@ class RecyclerItemAdapter : RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>
             return oldItem == newItem
         }
 
+    }
+     fun clear(){
+        differ.submitList(null)
     }
 
     val differ = AsyncListDiffer(this,differCallback)
