@@ -1,18 +1,19 @@
 package ir.shahabazimi.barcode
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.RealmResults
+import ir.shahabazimi.barcode.classes.RecyclerItemModel
 import ir.shahabazimi.barcode.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,14 +22,26 @@ class MainActivity : AppCompatActivity() {
         init()
     }
 
-    private fun init()= with(binding){
-        topAppBar.setOnMenuItemClickListener { menuItem->
-            when(menuItem.itemId){
-                R.id.appbar_menu_clear->{
-                    //todo Implement This
+    private fun init() = with(binding) {
+        topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.appbar_menu_clear -> {
+                    lifecycleScope.launch { clear() }
                     true
                 }
-                else->false
+                else -> false
+            }
+        }
+
+    }
+
+    private suspend fun clear() {
+        val config = RealmConfiguration.Builder(setOf(RecyclerItemModel::class))
+            .build()
+        Realm.open(config).apply {
+            write {
+                val items: RealmResults<RecyclerItemModel> = this.query<RecyclerItemModel>().find()
+                delete(items)
             }
         }
 

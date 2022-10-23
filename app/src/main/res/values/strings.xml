@@ -10,5 +10,6 @@
     <string name="scan_fragment_waiting">Waiting for Barcode…</string>
     <string name="scan_fragment_title">Scan Barcodes</string>
     <string name="home_fragment_title">Barcodes List</string>
+    <string name="row_title">% gram(s)</string>
 
 </resources>
