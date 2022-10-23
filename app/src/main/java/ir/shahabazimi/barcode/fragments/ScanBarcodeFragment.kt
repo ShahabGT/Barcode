@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -19,16 +20,22 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.appbar.MaterialToolbar
 import ir.shahabazimi.barcode.R
 import ir.shahabazimi.barcode.databinding.FragmentScanBarcodeBinding
 import ir.shahabazimi.barcode.utils.BarcodeAnalyzer
 import ir.shahabazimi.barcode.utils.Consts
 import ir.shahabazimi.barcode.utils.Preferences
 import ir.shahabazimi.barcode.viewmodels.ResultViewModel
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -38,10 +45,11 @@ typealias BarcodeListener = (barcode: String) -> Unit
 class ScanBarcodeFragment : Fragment() {
 
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var b: FragmentScanBarcodeBinding
+    private lateinit var binding: FragmentScanBarcodeBinding
     private lateinit var cameraPermission: ActivityResultLauncher<String>
     private val resultViewModel: ResultViewModel by activityViewModels()
     private var processingBarcode = AtomicBoolean(false)
+    private lateinit var scannedBarcodes: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +67,37 @@ class ScanBarcodeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        b = FragmentScanBarcodeBinding.inflate(layoutInflater, container, false)
-        return b.root
+        binding = FragmentScanBarcodeBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
+
+    }
+
+    private fun init() {
+        scannedBarcodes = mutableListOf()
+        requireActivity().onBackPressedDispatcher.addCallback {
+            handleBackPress()
+        }
+
+        requireActivity().findViewById<MaterialToolbar>(R.id.topAppBar).apply {
+            title = getString(R.string.scan_fragment_title)
+            navigationIcon =
+                ResourcesCompat.getDrawable(resources, R.drawable.icon_back, null)
+            setNavigationOnClickListener {
+                handleBackPress()
+            }
+        }
+
         setupPermissions()
+    }
+
+    private fun handleBackPress() {
+        resultViewModel.setResult(scannedBarcodes)
+        findNavController().popBackStack()
     }
 
     override fun onResume() {
@@ -78,7 +110,7 @@ class ScanBarcodeFragment : Fragment() {
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(b.qrPreview.surfaceProvider)
+                it.setSurfaceProvider(binding.qrPreview.surfaceProvider)
             }
             val imageAnalysis = ImageAnalysis.Builder()
                 .build()
@@ -87,8 +119,17 @@ class ScanBarcodeFragment : Fragment() {
                         if (processingBarcode.compareAndSet(false, true) &&
                             barcode != Consts.BARCODE_ERROR
                         ) {
-                            resultViewModel.setResult(barcode)
-                            NavHostFragment.findNavController(this).popBackStack()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                binding.qrDescription.text = barcode
+                                scannedBarcodes.add(barcode)
+                                delay(1500)
+                                binding.qrDescription.text =
+                                    getString(R.string.scan_fragment_waiting)
+                                processingBarcode.set(false)
+                            }
+//                            resultViewModel.setResult(barcode)
+//                            NavHostFragment.findNavController(this).popBackStack()
+
                         }
                     })
                 }
@@ -98,6 +139,7 @@ class ScanBarcodeFragment : Fragment() {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
             } catch (e: Exception) {
+
                 NavHostFragment.findNavController(this).popBackStack()
             }
         }, ContextCompat.getMainExecutor(requireContext()))

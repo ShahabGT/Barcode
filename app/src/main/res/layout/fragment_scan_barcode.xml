@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.camera.view.PreviewView
-        android:id="@+id/qr_preview"
+        android:id="@+id/qrPreview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,13 +19,13 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:src="@drawable/camera_frame"
-        app:layout_constraintBottom_toTopOf="@+id/qr_card"
+        app:layout_constraintBottom_toTopOf="@+id/qrCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/qr_card"
+        android:id="@+id/qrCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -40,23 +40,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/qr_scan"
-            style="@style/TextAppearance.AppCompat.Subhead"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/qr_description"
-            style="@style/TextAppearance.AppCompat.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="30dp"
-            android:gravity="center" />
+            android:id="@+id/qrDescription"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="12dp"
+            android:gravity="center"
+            android:text="@string/scan_fragment_waiting"
+            android:textColor="?attr/colorOnPrimary" />
 
     </LinearLayout>
 

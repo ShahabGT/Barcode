@@ -6,17 +6,13 @@ import androidx.lifecycle.ViewModel
 
 class ResultViewModel : ViewModel() {
 
-    private val _result: MutableLiveData<String?> =
+    private val _result: MutableLiveData<List<String>> =
         MutableLiveData()
-    val result: LiveData<String?>
+    val result: LiveData<List<String>>
         get() = _result
 
-    fun setResult(result:String) {
+    fun setResult(result:List<String>) {
         _result.value = result
-    }
-
-    fun clear() {
-        _result.value = null
     }
 
 }
