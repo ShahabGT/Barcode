@@ -1,10 +1,8 @@
 package ir.shahabazimi.barcode.fragments
 
 import android.Manifest.permission.CAMERA
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -29,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ir.shahabazimi.barcode.R
 import ir.shahabazimi.barcode.databinding.FragmentScanBarcodeBinding
 import ir.shahabazimi.barcode.utils.BarcodeAnalyzer
@@ -165,7 +164,7 @@ class ScanBarcodeFragment : Fragment() {
                     CAMERA
                 )
             ) {
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext())
                     .setMessage(getString(R.string.camera_permission_rationale_message))
                     .setTitle(getString(R.string.camera_permission_rationale_title))
                     .setPositiveButton(getString(R.string.camera_permission_rationale_positive)) { _, _ ->

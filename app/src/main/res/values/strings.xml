@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Barcode</string>
 
-    <string name="camera_permission_rationale_message">message</string>
-    <string name="camera_permission_rationale_title">title</string>
-    <string name="camera_permission_rationale_positive">positive</string>
-    <string name="camera_permission_rationale_negative">negative</string>
-    <string name="camera_permission_rationale_settings">settings</string>
+    <string name="camera_permission_rationale_message">to Scan Barcodes Camera Permission is Needed, Please Grant Permission to Use Camera</string>
+    <string name="camera_permission_rationale_title">Camera Permission</string>
+    <string name="camera_permission_rationale_positive">Allow</string>
+    <string name="camera_permission_rationale_negative">Deny</string>
+    <string name="camera_permission_rationale_settings">Please Grant Camera Permission in App Settings</string>
     <string name="appbar_menu_clear">Clear Database</string>
     <string name="scan_fragment_waiting">Waiting for Barcode…</string>
     <string name="scan_fragment_title">Scan Barcodes</string>
