@@ -45,9 +45,6 @@ class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) : 
         }
 
     }
-     fun clear(){
-        differ.submitList(null)
-    }
 
     val differ = AsyncListDiffer(this,differCallback)
 

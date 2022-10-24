@@ -1,12 +1,11 @@
 package ir.shahabazimi.barcode.classes
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.RealmUUID
-import io.realm.kotlin.types.annotations.PrimaryKey
-import java.util.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class RecyclerItemModel : RealmObject {
-    @PrimaryKey
-    var id: RealmUUID = RealmUUID.random()
-    var weight: String = ""
-}
+@Entity(tableName = "Barcodes")
+data class RecyclerItemModel(
+    @PrimaryKey() val id: String,
+    @ColumnInfo(name = "weight") val weight: String?,
+)
