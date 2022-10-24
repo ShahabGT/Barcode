@@ -12,19 +12,7 @@ import ir.shahabazimi.barcode.utils.Consts.BARCODE_ERROR
 
 class BarcodeAnalyzer(private val barcodeListener: BarcodeListener) : ImageAnalysis.Analyzer {
 
-    private val scanner = BarcodeScanning.getClient(
-        BarcodeScannerOptions.Builder().setBarcodeFormats(
-            Barcode.FORMAT_CODE_128,
-            Barcode.FORMAT_CODE_39,
-            Barcode.FORMAT_CODE_93,
-            Barcode.FORMAT_CODABAR,
-            Barcode.FORMAT_EAN_13,
-            Barcode.FORMAT_EAN_8,
-            Barcode.FORMAT_ITF,
-            Barcode.FORMAT_UPC_A,
-            Barcode.FORMAT_UPC_E,
-        ).build()
-    )
+    private val scanner = BarcodeScanning.getClient()
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy) {

@@ -117,15 +117,16 @@ class ScanBarcodeFragment : Fragment() {
             val imageAnalysis = ImageAnalysis.Builder()
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
+                    it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { result ->
                         if (processingBarcode.compareAndSet(false, true) &&
-                            barcode != Consts.BARCODE_ERROR
+                            result != Consts.BARCODE_ERROR
                         ) {
                             lifecycleScope.launch {
+                                val barcode = result.replace("/",".").replace("\"",".")
                                 player?.start()
                                 binding.qrDescription.text = barcode
                                 scannedBarcodes.add(barcode)
-                                delay(1500)
+                                delay(1000)
                                 binding.qrDescription.text =
                                     getString(R.string.scan_fragment_waiting)
                                 processingBarcode.set(false)
