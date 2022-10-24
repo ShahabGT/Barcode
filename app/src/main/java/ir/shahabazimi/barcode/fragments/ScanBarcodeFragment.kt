@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -19,12 +21,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.core.view.removeItemAt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -35,8 +33,6 @@ import ir.shahabazimi.barcode.utils.BarcodeAnalyzer
 import ir.shahabazimi.barcode.utils.Consts
 import ir.shahabazimi.barcode.utils.Preferences
 import ir.shahabazimi.barcode.viewmodels.ResultViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
@@ -93,7 +89,7 @@ class ScanBarcodeFragment : Fragment() {
             setNavigationOnClickListener {
                 handleBackPress()
             }
-            menu.findItem(R.id.appbar_menu_clear).isVisible=false
+            menu.findItem(R.id.appbar_menu_clear).isVisible = false
         }
 
         setupPermissions()
@@ -131,9 +127,6 @@ class ScanBarcodeFragment : Fragment() {
                                     getString(R.string.scan_fragment_waiting)
                                 processingBarcode.set(false)
                             }
-//                            resultViewModel.setResult(barcode)
-//                            NavHostFragment.findNavController(this).popBackStack()
-
                         }
                     })
                 }

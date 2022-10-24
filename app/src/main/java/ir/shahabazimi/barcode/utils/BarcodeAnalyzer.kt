@@ -3,14 +3,28 @@ package ir.shahabazimi.barcode.utils
 import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import ir.shahabazimi.barcode.fragments.BarcodeListener
 import ir.shahabazimi.barcode.utils.Consts.BARCODE_ERROR
 
 class BarcodeAnalyzer(private val barcodeListener: BarcodeListener) : ImageAnalysis.Analyzer {
 
-    private val scanner = BarcodeScanning.getClient()
+    private val scanner = BarcodeScanning.getClient(
+        BarcodeScannerOptions.Builder().setBarcodeFormats(
+            Barcode.FORMAT_CODE_128,
+            Barcode.FORMAT_CODE_39,
+            Barcode.FORMAT_CODE_93,
+            Barcode.FORMAT_CODABAR,
+            Barcode.FORMAT_EAN_13,
+            Barcode.FORMAT_EAN_8,
+            Barcode.FORMAT_ITF,
+            Barcode.FORMAT_UPC_A,
+            Barcode.FORMAT_UPC_E,
+        ).build()
+    )
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy) {

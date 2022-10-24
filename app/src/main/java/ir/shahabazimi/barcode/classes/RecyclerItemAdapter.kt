@@ -8,44 +8,50 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ir.shahabazimi.barcode.databinding.ItemRecyclerBinding
 
-class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) : RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>(){
+class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) :
+    RecyclerView.Adapter<RecyclerItemAdapter.ViewHolder>() {
+
     private lateinit var binding: ItemRecyclerBinding
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemAdapter.ViewHolder {
-        binding= ItemRecyclerBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): RecyclerItemAdapter.ViewHolder {
+        binding = ItemRecyclerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder()
     }
 
     override fun onBindViewHolder(holder: RecyclerItemAdapter.ViewHolder, position: Int) {
         holder.setData(differ.currentList[position])
-        holder.setIsRecyclable(false)
     }
 
-    override fun getItemCount()=differ.currentList.size
+    override fun getItemCount() = differ.currentList.size
 
-    inner class ViewHolder : RecyclerView.ViewHolder(binding.root){
-        fun setData(item : RecyclerItemModel){
-            binding.apply {
-                weight.text = item.weight
-                delete.setOnClickListener {
-                    onSelect(item)
-                }
+    inner class ViewHolder : RecyclerView.ViewHolder(binding.root) {
+        fun setData(item: RecyclerItemModel) = with(binding) {
+            weight.text = item.weight
+            delete.setOnClickListener {
+                onSelect(item)
             }
         }
-
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<RecyclerItemModel>(){
-        override fun areItemsTheSame(oldItem: RecyclerItemModel, newItem: RecyclerItemModel): Boolean {
-            return  oldItem.id == newItem.id
-        }
+    private val differCallback = object : DiffUtil.ItemCallback<RecyclerItemModel>() {
+        override fun areItemsTheSame(
+            oldItem: RecyclerItemModel,
+            newItem: RecyclerItemModel
+        ) = oldItem.id == newItem.id
+
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: RecyclerItemModel, newItem: RecyclerItemModel): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(
+            oldItem: RecyclerItemModel,
+            newItem: RecyclerItemModel
+        ) = oldItem == newItem
+
 
     }
 
-    val differ = AsyncListDiffer(this,differCallback)
+    val differ = AsyncListDiffer(this, differCallback)
 
 }

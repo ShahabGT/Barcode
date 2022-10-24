@@ -19,6 +19,7 @@ import ir.shahabazimi.barcode.viewmodels.ResultViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.util.*
 
 
@@ -105,26 +106,29 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private fun readData() {
+    private fun readData() =
         db.userDao.getAll().observe(viewLifecycleOwner) {
             handleData(it)
         }
-    }
 
     private fun handleData(data: List<RecyclerItemModel>) {
-        val sum = data.sumOf { it.weight?.toDouble() ?: 0.0 }
+        val sum = data.sumOf {
+            try {
+                it.weight?.toBigDecimal() ?: BigDecimal.ZERO
+
+            } catch (e: NumberFormatException) {
+                BigDecimal.ZERO
+            }
+        }
         recyclerItemAdapter.differ.submitList(data)
         binding.detailsFab.text = getString(R.string.details_fab_title, sum.toString())
         setEmptyView(data.size)
     }
 
-    private suspend fun clear() {
-        db.userDao.clearTable()
-    }
+    private fun clear() = db.userDao.clearTable()
 
-    private suspend fun deleteItem(item: RecyclerItemModel) {
-        db.userDao.delete(item)
-    }
+
+    private fun deleteItem(item: RecyclerItemModel) = db.userDao.delete(item)
 
     private fun setEmptyView(count: Int) = with(binding) {
         emptyView.setVisibility(count == 0)
@@ -133,7 +137,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun View.setVisibility(show: Boolean) {
-        if (show) visibility = View.VISIBLE else View.INVISIBLE
+        visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
     private fun ExtendedFloatingActionButton.setShow(show: Boolean) {

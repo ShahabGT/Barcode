@@ -5,6 +5,6 @@
         android:id="@+id/appbar_menu_clear"
         android:icon="@drawable/icon_clear"
         android:title="@string/appbar_menu_clear"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
 </menu>
