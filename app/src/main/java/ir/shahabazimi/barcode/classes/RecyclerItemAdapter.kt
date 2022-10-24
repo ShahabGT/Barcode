@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import ir.shahabazimi.barcode.R
 import ir.shahabazimi.barcode.databinding.ItemRecyclerBinding
 
 class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) :
@@ -29,10 +30,8 @@ class RecyclerItemAdapter(private val onSelect: (RecyclerItemModel?) -> Unit) :
 
     inner class ViewHolder : RecyclerView.ViewHolder(binding.root) {
         fun setData(item: RecyclerItemModel) = with(binding) {
-            weight.text = item.weight
-            delete.setOnClickListener {
-                onSelect(item)
-            }
+            weight.text = binding.root.context.getString(R.string.row_title, item.weight)
+            delete.setOnClickListener { onSelect(item) }
         }
     }
 

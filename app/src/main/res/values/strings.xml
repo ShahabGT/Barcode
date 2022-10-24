@@ -6,11 +6,11 @@
     <string name="camera_permission_rationale_positive">positive</string>
     <string name="camera_permission_rationale_negative">negative</string>
     <string name="camera_permission_rationale_settings">settings</string>
-    <string name="appbar_menu_clear">Clear</string>
+    <string name="appbar_menu_clear">Clear Database</string>
     <string name="scan_fragment_waiting">Waiting for Barcode…</string>
     <string name="scan_fragment_title">Scan Barcodes</string>
     <string name="home_fragment_title">Barcodes List</string>
-    <string name="row_title">% gram(s)</string>
+    <string name="row_title">%s gram(s)</string>
     <string name="details_fab_title">SUM: %s</string>
 
 </resources>

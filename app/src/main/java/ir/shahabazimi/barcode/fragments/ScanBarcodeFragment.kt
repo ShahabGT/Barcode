@@ -4,6 +4,8 @@ import android.Manifest.permission.CAMERA
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -49,6 +51,7 @@ class ScanBarcodeFragment : Fragment() {
     private val resultViewModel: ResultViewModel by activityViewModels()
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var scannedBarcodes: MutableList<String>
+    private var player: MediaPlayer?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +76,10 @@ class ScanBarcodeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
-
     }
 
     private fun init() {
+        player = MediaPlayer.create(context,R.raw.beep)
         scannedBarcodes = mutableListOf()
         requireActivity().onBackPressedDispatcher.addCallback {
             handleBackPress()
@@ -120,6 +123,7 @@ class ScanBarcodeFragment : Fragment() {
                             barcode != Consts.BARCODE_ERROR
                         ) {
                             lifecycleScope.launch {
+                                player?.start()
                                 binding.qrDescription.text = barcode
                                 scannedBarcodes.add(barcode)
                                 delay(1500)
@@ -145,6 +149,8 @@ class ScanBarcodeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        player?.release()
+        player=null
     }
 
     private fun setupPermissions() {
