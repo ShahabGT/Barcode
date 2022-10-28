@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'io.realm.kotlin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -15,13 +15,13 @@ android {
         targetSdk 33
         versionCode 2
         versionName "1.01"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -47,9 +47,12 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha03'
 
+
     //jetpack navigation component
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0-alpha02'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0-alpha02'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
+    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.2"
+
 
     //kotlin coroutines
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20'
@@ -64,7 +67,10 @@ dependencies {
     //db
     def room_version = "2.4.3"
     implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation 'com.google.guava:guava:27.0.1-android'
+
 
 }

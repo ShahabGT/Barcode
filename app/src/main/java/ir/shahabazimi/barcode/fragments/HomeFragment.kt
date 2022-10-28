@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import ir.shahabazimi.barcode.R
 import ir.shahabazimi.barcode.classes.AppDatabase
+import ir.shahabazimi.barcode.classes.ExportDataModel
 import ir.shahabazimi.barcode.classes.RecyclerItemAdapter
 import ir.shahabazimi.barcode.classes.RecyclerItemModel
 import ir.shahabazimi.barcode.databinding.FragmentHomeBinding
+import ir.shahabazimi.barcode.viewmodels.DataViewModel
 import ir.shahabazimi.barcode.viewmodels.ResultViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +30,7 @@ import java.util.*
 class HomeFragment : Fragment() {
 
     private val resultViewModel: ResultViewModel by activityViewModels()
+    private lateinit var dataViewModel: DataViewModel
     private lateinit var binding: FragmentHomeBinding
     private val recyclerItemAdapter by lazy {
         RecyclerItemAdapter { item ->
@@ -57,6 +62,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun init() {
+        dataViewModel = ViewModelProvider(this)[DataViewModel::class.java]
         observeResult()
         requireActivity().onBackPressedDispatcher.addCallback {
             handleBackPress()
@@ -67,6 +73,12 @@ class HomeFragment : Fragment() {
     private fun initViews() = with(binding) {
         scanButton.setOnClickListener {
             findNavController().navigate(R.id.action_to_scanBarcodeFragment)
+        }
+        detailsButton.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_to_exportFragment,
+                ExportFragmentArgs(data = ExportDataModel(dataViewModel.data)).toBundle()
+            )
         }
         requireActivity().findViewById<MaterialToolbar>(R.id.topAppBar).apply {
             title = getString(R.string.home_fragment_title)
@@ -86,7 +98,26 @@ class HomeFragment : Fragment() {
             menu.findItem(R.id.appbar_menu_clear).isVisible = true
 
         }
-        recycler.adapter = recyclerItemAdapter
+        with(recycler) {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy > 0 || dy < 0 && scanButton.isShown) {
+                        scanButton.hide()
+                        detailsButton.hide()
+                    }
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        scanButton.show()
+                        detailsButton.show()
+                    }
+                    super.onScrollStateChanged(recyclerView, newState)
+                }
+            })
+            adapter = recyclerItemAdapter
+
+        }
         readData()
     }
 
@@ -95,6 +126,7 @@ class HomeFragment : Fragment() {
     private fun observeResult() =
         resultViewModel.result.observe(viewLifecycleOwner) { result ->
             CoroutineScope(Dispatchers.IO).launch {
+                dataViewModel.data = result
                 result.forEach {
                     db.userDao.insert(
                         RecyclerItemModel(
@@ -121,7 +153,7 @@ class HomeFragment : Fragment() {
             }
         }
         recyclerItemAdapter.differ.submitList(data)
-        binding.detailsFab.text = getString(R.string.details_fab_title, sum.toString())
+        binding.detailsButton.text = getString(R.string.details_fab_title, sum.toString())
         setEmptyView(data.size)
     }
 
@@ -132,7 +164,7 @@ class HomeFragment : Fragment() {
 
     private fun setEmptyView(count: Int) = with(binding) {
         emptyView.setVisibility(count == 0)
-        detailsFab.setShow(count != 0)
+        detailsButton.setShow(count != 0)
         recycler.setVisibility(count != 0)
     }
 

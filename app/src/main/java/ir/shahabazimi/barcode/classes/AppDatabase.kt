@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ir.shahabazimi.barcode.utils.Consts
 
-@Database(entities = [RecyclerItemModel::class], version = 1)
+@Database(entities = [RecyclerItemModel::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val userDao: BarcodeDAO

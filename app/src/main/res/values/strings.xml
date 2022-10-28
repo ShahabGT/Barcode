@@ -12,5 +12,7 @@
     <string name="home_fragment_title">Barcodes List</string>
     <string name="row_title">%s gram(s)</string>
     <string name="details_fab_title">SUM: %s</string>
+    <string name="export_fragment_title">Export Data</string>
+
 
 </resources>
