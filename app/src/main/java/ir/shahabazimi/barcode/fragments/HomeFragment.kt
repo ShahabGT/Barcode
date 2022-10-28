@@ -14,7 +14,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import ir.shahabazimi.barcode.R
 import ir.shahabazimi.barcode.classes.AppDatabase
-import ir.shahabazimi.barcode.classes.ExportDataModel
 import ir.shahabazimi.barcode.classes.RecyclerItemAdapter
 import ir.shahabazimi.barcode.classes.RecyclerItemModel
 import ir.shahabazimi.barcode.databinding.FragmentHomeBinding
@@ -22,9 +21,9 @@ import ir.shahabazimi.barcode.viewmodels.DataViewModel
 import ir.shahabazimi.barcode.viewmodels.ResultViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.util.*
 
 
 class HomeFragment : Fragment() {
@@ -33,7 +32,7 @@ class HomeFragment : Fragment() {
     private lateinit var dataViewModel: DataViewModel
     private lateinit var binding: FragmentHomeBinding
     private val recyclerItemAdapter by lazy {
-        RecyclerItemAdapter { item ->
+        RecyclerItemAdapter(mutableListOf()) { item ->
             item?.let {
                 CoroutineScope(Dispatchers.IO).launch {
                     deleteItem(
@@ -75,10 +74,11 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_to_scanBarcodeFragment)
         }
         detailsButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_to_exportFragment,
-                ExportFragmentArgs(data = ExportDataModel(dataViewModel.data)).toBundle()
-            )
+            //todo add export
+//            findNavController().navigate(
+//                R.id.action_to_exportFragment,
+//                ExportFragmentArgs(data = ExportDataModel(dataViewModel.data)).toBundle()
+//            )
         }
         requireActivity().findViewById<MaterialToolbar>(R.id.topAppBar).apply {
             title = getString(R.string.home_fragment_title)
@@ -101,20 +101,16 @@ class HomeFragment : Fragment() {
         with(recycler) {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy > 0 || dy < 0 && scanButton.isShown) {
+                    if (dy < 0) {
+                        scanButton.show()
+                        detailsButton.show()
+                    } else if (dy > 0) {
                         scanButton.hide()
                         detailsButton.hide()
                     }
                 }
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        scanButton.show()
-                        detailsButton.show()
-                    }
-                    super.onScrollStateChanged(recyclerView, newState)
-                }
             })
+            setHasFixedSize(true)
             adapter = recyclerItemAdapter
 
         }
@@ -130,17 +126,18 @@ class HomeFragment : Fragment() {
                 result.forEach {
                     db.userDao.insert(
                         RecyclerItemModel(
-                            id = UUID.randomUUID().toString(),
-                            weight = it
+                            weight = it,
+                            date = System.currentTimeMillis()
                         )
                     )
+                    delay(100)
                 }
             }
         }
 
     private fun readData() =
-        db.userDao.getAll().observe(viewLifecycleOwner) {
-            handleData(it)
+        db.userDao.getAll().observe(viewLifecycleOwner) { item ->
+            handleData(item)
         }
 
     private fun handleData(data: List<RecyclerItemModel>) {
@@ -152,13 +149,12 @@ class HomeFragment : Fragment() {
                 BigDecimal.ZERO
             }
         }
-        recyclerItemAdapter.differ.submitList(data)
+        recyclerItemAdapter.add(data.toMutableList())
         binding.detailsButton.text = getString(R.string.details_fab_title, sum.toString())
         setEmptyView(data.size)
     }
 
     private fun clear() = db.userDao.clearTable()
-
 
     private fun deleteItem(item: RecyclerItemModel) = db.userDao.delete(item)
 

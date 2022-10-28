@@ -50,7 +50,7 @@ class ScanBarcodeFragment : Fragment() {
     private val resultViewModel: ResultViewModel by activityViewModels()
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var scannedBarcodes: MutableList<String>
-    private var player: MediaPlayer?=null
+    private var player: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +78,7 @@ class ScanBarcodeFragment : Fragment() {
     }
 
     private fun init() {
-        player = MediaPlayer.create(context,R.raw.beep)
+        player = MediaPlayer.create(context, R.raw.beep)
         scannedBarcodes = mutableListOf()
         requireActivity().onBackPressedDispatcher.addCallback {
             handleBackPress()
@@ -122,13 +122,15 @@ class ScanBarcodeFragment : Fragment() {
                             result != Consts.BARCODE_ERROR
                         ) {
                             lifecycleScope.launch {
-                                val barcode = result.replace("/",".").replace("\"",".")
-                                player?.start()
-                                binding.qrDescription.text = barcode
-                                scannedBarcodes.add(barcode)
-                                delay(1000)
-                                binding.qrDescription.text =
-                                    getString(R.string.scan_fragment_waiting)
+                                val barcode = result.replace("/", ".").replace("\"", ".")
+                                if (barcode.matches(Regex("^-?[0-9]{1,2}+(?:.[0-9]{1,2})?$"))) {
+                                    player?.start()
+                                    binding.qrDescription.text = barcode
+                                    scannedBarcodes.add(barcode)
+                                    delay(1000)
+                                    binding.qrDescription.text =
+                                        getString(R.string.scan_fragment_waiting)
+                                }
                                 processingBarcode.set(false)
                             }
                         }
@@ -150,7 +152,7 @@ class ScanBarcodeFragment : Fragment() {
         super.onDestroy()
         cameraExecutor.shutdown()
         player?.release()
-        player=null
+        player = null
     }
 
     private fun setupPermissions() {

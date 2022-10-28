@@ -8,7 +8,7 @@ import androidx.room.Query
 
 @Dao
 interface BarcodeDAO {
-    @Query("SELECT * FROM Barcodes")
+    @Query("SELECT * FROM Barcodes ORDER BY date DESC")
     fun getAll(): LiveData<List<RecyclerItemModel>>
 
     @Insert
