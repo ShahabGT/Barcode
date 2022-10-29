@@ -24,20 +24,20 @@ class RecyclerItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerItemAdapter.ViewHolder, position: Int) {
         holder.setIsRecyclable(false)
-        holder.setData(data[position])
+        holder.setData(data[position], (position + 1).toString())
     }
 
     override fun getItemCount() = data.size
 
     inner class ViewHolder : RecyclerView.ViewHolder(binding.root) {
-        fun setData(item: RecyclerItemModel) = with(binding) {
+        fun setData(item: RecyclerItemModel, position: String) = with(binding) {
             weight.text = root.context.getString(R.string.row_title, item.weight)
-            row.text = item.id.toString()
+            row.text = position
             delete.setOnClickListener { onSelect(item) }
         }
     }
 
-    fun add(newData: MutableList<RecyclerItemModel>){
+    fun add(newData: MutableList<RecyclerItemModel>) {
         data.clear()
         data.addAll(newData)
         notifyDataSetChanged()
